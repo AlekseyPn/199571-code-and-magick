@@ -8,7 +8,7 @@
     outline: '2px dashed red',
     cellBackground: 'yellow'
   };
-
+  var draggedItem = null;
   var setupHandlers = {
     openPopup: function () {
       window.setup.userDialog.classList.remove('hidden');
@@ -64,16 +64,20 @@
         evt.dataTransfer.setData('text/plain', evt.target.alt);
       }
     },
-    elemDropHandler: function (evt) {
-      if (evt.target.classList.contains('setup-artifacts-cell')) {
-        evt.target.style.background = '';
-        evt.target.appendChild(draggedItem);
-        evt.preventDefault();
+    cellsDragStartHandler: function (evt) {
+      if (evt.target.tagName.toLowerCase() === 'img') {
+        draggedItem = evt.target;
+        evt.dataTransfer.setData('text/plain', evt.target.alt);
       }
-      return false;
+    },
+    elemDropHandler: function (evt) {
+      evt.target.style.background = '';
+      evt.target.appendChild(draggedItem);
+      evt.preventDefault();
+      draggedItem = null;
     },
     elemDragEnterHandler: function (evt) {
-      if (!evt.target.classList.contains('setup-artifacts-cell')) {
+      if (!evt.target.classList.contains('setup-artifacts-cell') || evt.target.children.length !== 0) {
         artifactsElement.removeEventListener('drop', drag.elemDropHandler);
       } else {
         artifactsElement.addEventListener('drop', drag.elemDropHandler);
@@ -94,7 +98,7 @@
   var dialogHandle = document.querySelector('.setup-user-pic');
   var shopElement = document.querySelector('.setup-artifacts-shop');
   var artifactsElement = document.querySelector('.setup-artifacts');
-  var draggedItem = null;
+
   setupOpen.addEventListener('click', setupHandlers.openPopup);
   setupOpen.addEventListener('keydown', setupHandlers.popupEnterPressHandler);
   setupClose.addEventListener('click', setupHandlers.closePopup);
@@ -109,6 +113,7 @@
     document.addEventListener('mouseup', drag.mouseUpHandler);
   });
   shopElement.addEventListener('dragstart', drag.dragStartHandler);
+  artifactsElement.addEventListener('dragstart', drag.cellsDragStartHandler);
   artifactsElement.addEventListener('dragover', function (evt) {
     evt.preventDefault();
     return false;
