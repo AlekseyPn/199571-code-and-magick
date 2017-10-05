@@ -1,5 +1,5 @@
 'use strict';
-(function () {
+window.dialog = (function () {
   var KEY_CODE = {
     enter: 13,
     esc: 27
@@ -9,6 +9,7 @@
     cellBackground: 'yellow'
   };
   var draggedItem = null;
+
   var setupHandlers = {
     openPopup: function () {
       window.setup.userDialog.classList.remove('hidden');
@@ -35,6 +36,7 @@
       }
     }
   };
+
   var drag = {
     startCoords: {
       x: null,
@@ -122,4 +124,7 @@
   artifactsElement.addEventListener('dragenter', drag.elemDragEnterHandler);
 
   artifactsElement.addEventListener('dragleave', drag.elemDragLeaveHandler);
+  return {
+    closePopup: setupHandlers.closePopup
+  };
 })();

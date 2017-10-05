@@ -1,52 +1,47 @@
 /* eslint-disable no-invalid-this */
 'use strict';
 window.setup = (function () {
-  var NAMES = ['Иван', 'Хуан Себастьян', 'Мария', 'Кристоф', 'Виктор', 'Юлия', 'Люпита', 'Вашингтон'];
-  var LAST_NAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
-  var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
-  var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
   var randomizeOrder = function (data) {
     var dataClone = data.slice(0, data.length);
     return dataClone.sort(function () {
       return Math.random() - 0.5;
     });
   };
-  var getRandomElement = function (data) {
-    return data[Math.floor(Math.random() * data.length)];
+  var successHandler = function (data) {
+    var wizards = data;
+    WIZARDS_INIT.init(randomizeOrder(wizards), setupListFragment, listElement, setupSimilar);
+  };
+  var errorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
   };
   var WIZARDS_INIT = {
-    generateSimilarWizards: function (names, lastNames, coatColors, eyesColors) {
-      var wizardsCount = 4;
-      var wizardsList = [];
-      var namesShuffled = randomizeOrder(names);
-      var lastNamesShuffled = randomizeOrder(lastNames);
-      for (var i = 0; i < wizardsCount; i++) {
-        wizardsList[i] = {
-          name: namesShuffled[i] + ' ' + lastNamesShuffled[i],
-          eyesColor: getRandomElement(eyesColors),
-          coatColor: getRandomElement(coatColors)
-        };
-      }
-      return wizardsList;
-    },
     drawWizard: function (wizard) {
       var wizardElement = similarWizardTemplate.cloneNode(true);
       wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
-      wizardElement.querySelector('.wizard-coat').style.fill = wizard.coatColor;
-      wizardElement.querySelector('.wizard-eyes').style.fill = wizard.eyesColor;
+      wizardElement.querySelector('.wizard-coat').style.fill = wizard.colorCoat;
+      wizardElement.querySelector('.wizard-eyes').style.fill = wizard.colorEyes;
       return wizardElement;
     },
-    insertWizardFragments: function (wizard, fragment, elem) {
-      for (var i = 0; i < wizard.length; i++) {
-        fragment.appendChild(this.drawWizard(wizard[i]));
+    insertWizardsFragments: function (wizards, fragment, elem) {
+      var maxWizards = 4;
+      for (var i = 0; i < maxWizards; i++) {
+        fragment.appendChild(this.drawWizard(wizards[i]));
       }
       elem.appendChild(fragment);
     },
     showNode: function (elem) {
       elem.classList.remove('hidden');
     },
-    init: function (wizard, fragment, elem, setupElem) {
-      this.insertWizardFragments(wizard, fragment, elem);
+    init: function (wizards, fragment, elem, setupElem) {
+      this.insertWizardsFragments(wizards, fragment, elem);
       this.showNode(setupElem);
     }
   };
@@ -55,18 +50,11 @@ window.setup = (function () {
   var listElement = userDialog.querySelector('.setup-similar-list');
   var setupSimilar = userDialog.querySelector('.setup-similar');
   var setupListFragment = document.createDocumentFragment();
-  var wizards = null;
-  wizards = WIZARDS_INIT.generateSimilarWizards(NAMES, LAST_NAMES, COAT_COLORS, EYES_COLORS);
-  WIZARDS_INIT.init(wizards, setupListFragment, listElement, setupSimilar);
+
+  window.backend.load(errorHandler, successHandler);
+
   return {
-    coatColors: COAT_COLORS,
-    eyesColors: EYES_COLORS,
+    errorHandler: errorHandler,
     userDialog: userDialog
   };
 })();
-
-// Обработчики событий для диалога
-
-// Переменные
-
-
