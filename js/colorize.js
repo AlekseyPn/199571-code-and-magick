@@ -10,30 +10,33 @@
     eyes: 0,
     fireball: 0
   };
+  var incrementColorIndex = function (index, colors) {
+    return (index + 1) % colors.length;
+  };
   var colorize = {
-    wizardElemFill: function (elem, array, index) {
-      elem.style.fill = array[index];
+    fillElement: function (elem, colors, index) {
+      elem.style.fill = colors[index];
     },
-    wizardFireballFill: function (elem, array, index) {
-      elem.style.backgroundColor = array[index];
+    changeElementBackground: function (elem, colors, index) {
+      elem.style.backgroundColor = colors[index];
     }
   };
   setupWizard.addEventListener('click', function (evt) {
     var evtTarget = evt.target;
     switch (evtTarget) {
       case setupWizardCoat:
-        colorize.wizardElemFill(setupWizardCoat, window.setup.coatColors, colorsIndex.coat);
-        colorsIndex.coat = window.calculateFunctions.incrementColorIndex(colorsIndex.coat, window.setup.coatColors);
+        window.colorizeElement(setupWizardCoat, window.setup.coatColors, colorsIndex.coat, colorize.fillElement);
+        colorsIndex.coat = incrementColorIndex(colorsIndex.coat, window.setup.coatColors);
         break;
       case setupWizardEyes:
-        colorize.wizardElemFill(setupWizardEyes, window.setup.eyesColors, colorsIndex.eyes);
-        colorsIndex.eyes = window.calculateFunctions.incrementColorIndex(colorsIndex.eyes, window.setup.eyesColors);
+        window.colorizeElement(setupWizardEyes, window.setup.eyesColors, colorsIndex.eyes, colorize.fillElement);
+        colorsIndex.eyes = incrementColorIndex(colorsIndex.eyes, window.setup.eyesColors);
         break;
     }
     return false;
   });
   setupFireball.addEventListener('click', function () {
-    colorize.wizardFireballFill(setupFireball, FIREBALL_COLORS, colorsIndex.fireball);
-    colorsIndex.fireball = window.calculateFunctions.incrementColorIndex(colorsIndex.fireball, FIREBALL_COLORS);
+    window.colorizeElement(setupFireball, FIREBALL_COLORS, colorsIndex.fireball, colorize.changeElementBackground);
+    colorsIndex.fireball = incrementColorIndex(colorsIndex.fireball, FIREBALL_COLORS);
   });
 })();

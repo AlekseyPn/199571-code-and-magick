@@ -5,17 +5,26 @@ window.setup = (function () {
   var LAST_NAMES = ['да Марья', 'Верон', 'Мирабелла', 'Вальц', 'Онопко', 'Топольницкая', 'Нионго', 'Ирвинг'];
   var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
   var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
+  var randomizeOrder = function (data) {
+    var dataClone = data.slice(0, data.length);
+    return dataClone.sort(function () {
+      return Math.random() - 0.5;
+    });
+  };
+  var getRandomElement = function (data) {
+    return data[Math.floor(Math.random() * data.length)];
+  };
   var WIZARDS_INIT = {
     generateSimilarWizards: function (names, lastNames, coatColors, eyesColors) {
       var wizardsCount = 4;
       var wizardsList = [];
-      var namesShuffled = window.calculateFunctions.randomizeOrder(names);
-      var lastNamesShuffled = window.calculateFunctions.randomizeOrder(lastNames);
+      var namesShuffled = randomizeOrder(names);
+      var lastNamesShuffled = randomizeOrder(lastNames);
       for (var i = 0; i < wizardsCount; i++) {
         wizardsList[i] = {
           name: namesShuffled[i] + ' ' + lastNamesShuffled[i],
-          eyesColor: window.calculateFunctions.getRandomElement(eyesColors),
-          coatColor: window.calculateFunctions.getRandomElement(coatColors)
+          eyesColor: getRandomElement(eyesColors),
+          coatColor: getRandomElement(coatColors)
         };
       }
       return wizardsList;
