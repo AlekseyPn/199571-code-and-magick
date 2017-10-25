@@ -1,15 +1,21 @@
-/* eslint-disable no-invalid-this */
 'use strict';
 window.setup = (function () {
-  var randomizeOrder = function (data) {
-    var dataClone = data.slice(0, data.length);
-    return dataClone.sort(function () {
-      return Math.random() - 0.5;
-    });
+  var wizards = [];
+  var currentColors = {
+    coatColor: null,
+    eyesColor: null
+  };
+  var onEyesChange = function (color) {
+    currentColors.eyesColor = color;
+    window.debounce(updateWizards);
+  };
+  var onCoatChange = function (color) {
+    currentColors.coatColor = color;
+    window.debounce(updateWizards);
   };
   var successHandler = function (data) {
-    var wizards = data;
-    WIZARDS_INIT.init(randomizeOrder(wizards), setupListFragment, listElement, setupSimilar);
+    wizards = data;
+    updateWizards();
   };
   var errorHandler = function (errorMessage) {
     var node = document.createElement('div');
@@ -22,39 +28,29 @@ window.setup = (function () {
     node.textContent = errorMessage;
     document.body.insertAdjacentElement('afterbegin', node);
   };
-  var WIZARDS_INIT = {
-    drawWizard: function (wizard) {
-      var wizardElement = similarWizardTemplate.cloneNode(true);
-      wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
-      wizardElement.querySelector('.wizard-coat').style.fill = wizard.colorCoat;
-      wizardElement.querySelector('.wizard-eyes').style.fill = wizard.colorEyes;
-      return wizardElement;
-    },
-    insertWizardsFragments: function (wizards, fragment, elem) {
-      var maxWizards = 4;
-      for (var i = 0; i < maxWizards; i++) {
-        fragment.appendChild(this.drawWizard(wizards[i]));
-      }
-      elem.appendChild(fragment);
-    },
-    showNode: function (elem) {
-      elem.classList.remove('hidden');
-    },
-    init: function (wizards, fragment, elem, setupElem) {
-      this.insertWizardsFragments(wizards, fragment, elem);
-      this.showNode(setupElem);
-    }
-  };
-  var userDialog = document.querySelector('.setup');
-  var similarWizardTemplate = document.querySelector('#similar-wizard-template').content;
-  var listElement = userDialog.querySelector('.setup-similar-list');
-  var setupSimilar = userDialog.querySelector('.setup-similar');
-  var setupListFragment = document.createDocumentFragment();
-
   window.backend.load(errorHandler, successHandler);
-
+  var getRank = function (wizard) {
+    var rank = 0;
+    if (wizard.colorCoat === currentColors.coatColor) {
+      rank += 2;
+    }
+    if (wizard.colorEyes === currentColors.eyesColor) {
+      rank += 1;
+    }
+    return rank;
+  };
+  var updateWizards = function () {
+    window.render(wizards.slice().sort(function (left, right) {
+      var rankDiff = getRank(right) - getRank(left);
+      if (rankDiff === 0) {
+        rankDiff = wizards.indexOf(left) - wizards.indexOf(right);
+      }
+      return rankDiff;
+    }));
+  };
   return {
     errorHandler: errorHandler,
-    userDialog: userDialog
+    onEyesChange: onEyesChange,
+    onCoatChange: onCoatChange
   };
 })();

@@ -9,18 +9,18 @@ window.dialog = (function () {
     cellBackground: 'yellow'
   };
   var draggedItem = null;
-
+  var userDialog = document.querySelector('.setup');
   var setupHandlers = {
     openPopup: function () {
-      window.setup.userDialog.classList.remove('hidden');
+      userDialog.classList.remove('hidden');
       drag.setupCoords = {
-        x: window.setup.userDialog.offsetTop,
-        y: window.setup.userDialog.offsetLeft
+        x: userDialog.offsetTop,
+        y: userDialog.offsetLeft
       };
       document.addEventListener('keydown', setupHandlers.popupEscPressHandler);
     },
     closePopup: function () {
-      window.setup.userDialog.classList.add('hidden');
+      userDialog.classList.add('hidden');
       document.removeEventListener('keydown', setupHandlers.popupEscPressHandler);
     },
     popupEscPressHandler: function (evt) {
@@ -52,8 +52,8 @@ window.dialog = (function () {
         x: moveEvt.clientX,
         y: moveEvt.clientY
       };
-      window.setup.userDialog.style.top = (window.setup.userDialog.offsetTop - shift.y) + 'px';
-      window.setup.userDialog.style.left = (window.setup.userDialog.offsetLeft - shift.x) + 'px';
+      userDialog.style.top = (userDialog.offsetTop - shift.y) + 'px';
+      userDialog.style.left = (userDialog.offsetLeft - shift.x) + 'px';
     },
     mouseUpHandler: function (upEvt) {
       upEvt.preventDefault();

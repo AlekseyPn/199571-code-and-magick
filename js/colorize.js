@@ -18,9 +18,11 @@
     colorize = {
       fillElement: function (elem, colors, index) {
         elem.style.fill = colors[index];
+        return colors[index];
       },
       changeElementBackground: function (elem, colors, index) {
         elem.style.backgroundColor = colors[index];
+        return colors[index];
       },
       colorizeElement: function (elem, colors, index, cb) {
         cb(elem, colors, index);
@@ -31,10 +33,12 @@
     switch (evtTarget) {
       case setupWizardCoat:
         colorize.colorizeElement(setupWizardCoat, COAT_COLORS, colorsIndex.coat, colorize.fillElement);
+        window.setup.onCoatChange(COAT_COLORS[colorsIndex.coat]);
         colorsIndex.coat = incrementColorIndex(colorsIndex.coat, COAT_COLORS);
         break;
       case setupWizardEyes:
         colorize.colorizeElement(setupWizardEyes, EYES_COLORS, colorsIndex.eyes, colorize.fillElement);
+        window.setup.onEyesChange(EYES_COLORS[colorsIndex.eyes]);
         colorsIndex.eyes = incrementColorIndex(colorsIndex.eyes, EYES_COLORS);
         break;
     }
